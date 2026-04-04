@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
-<head><script src="/.nekoweb-api/static/site.js" defer></script>
+<head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>temi</title>
@@ -104,34 +104,6 @@ canvas {
     filter: invert(1) drop-shadow(0 0 12px var(--accent));
 }
 
-.music {
-    margin-top: 22px;
-    display: flex;
-    align-items: center;
-    gap: 14px;
-    color: white;
-}
-
-.music-btn {
-    width: 56px;
-    height: 56px;
-    border-radius: 50%;
-    border: none;
-    cursor: pointer;
-    background: radial-gradient(circle at top, rgba(255,255,255,.15), rgba(0,0,0,.6));
-    backdrop-filter: blur(14px);
-    color: white;
-    font-size: 20px;
-    box-shadow: inset 0 0 0 1px rgba(255,255,255,.15);
-    transition: transform .2s, box-shadow .3s;
-}
-
-.music-btn.playing {
-    box-shadow: 0 0 30px var(--accent);
-}
-
-.music-btn:hover { transform: scale(1.12); }
-
 #easter {
     position: fixed;
     bottom: 40px;
@@ -143,11 +115,12 @@ canvas {
 </style>
 </head>
 
-<body onclick="startAudio()">
+<body>
 
 <canvas id="rain"></canvas>
 
-<img id="pfp" class="fade" src="https://www.bing.com/th/id/OIP.0EMfS4vBWXE-HWQNHE8XGQHaJQ?w=181&h=211&c=8&rs=1&qlt=90&o=6&pid=3.1&rm=2">
+<img id="pfp" class="fade"
+src="https://www.bing.com/th/id/OIP.0EMfS4vBWXE-HWQNHE8XGQHaJQ?w=181&h=211&c=8&rs=1&qlt=90&o=6&pid=3.1&rm=2">
 
 <div class="card fade" id="card">
     <div class="bio">
@@ -158,32 +131,30 @@ canvas {
     <div id="time">Current time: --:--:--</div>
 
     <div class="icons">
+
         <a href="https://discord.com/users/1466129968940712286" target="_blank">
             <img src="https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/discord.svg">
         </a>
+
         <a href="https://www.roblox.com/users/5636025366/profile" target="_blank">
             <img src="https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/roblox.svg">
         </a>
+
         <a href="https://www.youtube.com/@SnoozeSZ" target="_blank">
             <img src="https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/youtube.svg">
         </a>
-    </div>
-</div>
 
-<div class="music fade">
-    <button id="musicBtn" class="music-btn">â–¶</button>
-    <span>Solar Success</span>
+        <!-- GitHub -->
+        <a href="https://github.com/coolytemi" target="_blank">
+            <img src="https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/github.svg">
+        </a>
+
+    </div>
 </div>
 
 <div id="easter">you found it.</div>
 
-<audio id="audio" loop>
-    <source src="SolarSucess.mp3" type="audio/mpeg">
-</audio>
-
 <script>
-const audio = document.getElementById("audio");
-const btn = document.getElementById("musicBtn");
 const card = document.getElementById("card");
 const easter = document.getElementById("easter");
 
@@ -198,30 +169,17 @@ function updateTime() {
 setInterval(updateTime, 1000);
 updateTime();
 
-function startAudio() {
-    audio.play();
-    btn.textContent = "â¸";
-    btn.classList.add("playing");
-    document.body.onclick = null;
-}
-
-btn.onclick = e => {
-    e.stopPropagation();
-    audio.paused ? audio.play() : audio.pause();
-    btn.textContent = audio.paused ? "â–¶" : "â¸";
-    btn.classList.toggle("playing", !audio.paused);
-};
-
 document.addEventListener("mousemove", e => {
     const x = (e.clientX / innerWidth - .5) * 10;
     const y = (e.clientY / innerHeight - .5) * 10;
     card.style.transform = `rotateX(${-y}deg) rotateY(${x}deg)`;
 });
 
-/* Rain */
+/* Rain effect */
 const canvas = document.getElementById("rain");
 const ctx = canvas.getContext("2d");
 let w, h;
+
 function resize() {
     w = canvas.width = innerWidth;
     h = canvas.height = innerHeight;
@@ -240,6 +198,7 @@ function rain() {
     ctx.clearRect(0,0,w,h);
     ctx.strokeStyle = "rgba(200,220,255,.25)";
     ctx.lineWidth = 1;
+
     drops.forEach(d => {
         ctx.beginPath();
         ctx.moveTo(d.x, d.y);
@@ -248,11 +207,12 @@ function rain() {
         d.y += d.s;
         if (d.y > h) d.y = -20;
     });
+
     requestAnimationFrame(rain);
 }
 rain();
 
-/* Easter Egg */
+/* Easter egg */
 let seq = "";
 document.addEventListener("keydown", e => {
     seq += e.key.toLowerCase();
@@ -260,10 +220,12 @@ document.addEventListener("keydown", e => {
     if (seq === "temi") {
         card.classList.add("glow");
         easter.style.opacity = 1;
+
         setTimeout(() => {
             card.classList.remove("glow");
             easter.style.opacity = 0;
         }, 3000);
+
         seq = "";
     }
 });
