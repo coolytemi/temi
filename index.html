@@ -31,6 +31,18 @@ body {
     user-select: none;
 }
 
+#cursorGlow {
+    position: fixed;
+    width: 220px;
+    height: 220px;
+    border-radius: 50%;
+    pointer-events: none;
+    background: radial-gradient(circle, rgba(140,200,255,0.25), transparent 60%);
+    transform: translate(-50%, -50%);
+    mix-blend-mode: screen;
+    filter: blur(2px);
+}
+
 canvas {
     position: fixed;
     inset: 0;
@@ -108,6 +120,8 @@ canvas {
 
 <body>
 
+<div id="cursorGlow"></div>
+
 <canvas id="fx"></canvas>
 
 <img id="pfp" class="fade"
@@ -153,6 +167,10 @@ document.addEventListener("mousemove", e => {
     const x = (e.clientX / innerWidth - .5) * 10;
     const y = (e.clientY / innerHeight - .5) * 10;
     card.style.transform = `rotateX(${-y}deg) rotateY(${x}deg)`;
+
+    const glow = document.getElementById("cursorGlow");
+    glow.style.left = e.clientX + "px";
+    glow.style.top = e.clientY + "px";
 });
 
 const canvas = document.getElementById("fx");
@@ -176,3 +194,41 @@ const particles = Array.from({length: 140}, () => ({
 }));
 
 function animate() {
+    ctx.clearRect(0,0,w,h);
+
+    ctx.fillStyle = "rgba(140,200,255,.25)";
+
+    particles.forEach(p => {
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+        ctx.fill();
+
+        p.x += p.vx;
+        p.y += p.vy;
+
+        if (p.x < 0) p.x = w;
+        if (p.x > w) p.x = 0;
+        if (p.y < 0) p.y = h;
+        if (p.y > h) p.y = 0;
+    });
+
+    requestAnimationFrame(animate);
+}
+
+animate();
+
+let seq = "";
+document.addEventListener("keydown", e => {
+    seq += e.key.toLowerCase();
+    if (!"temi".startsWith(seq)) seq = "";
+    if (seq === "temi") {
+        const easter = document.getElementById("easter");
+        easter.style.opacity = 1;
+        setTimeout(() => easter.style.opacity = 0, 3000);
+        seq = "";
+    }
+});
+</script>
+
+</body>
+</html>
