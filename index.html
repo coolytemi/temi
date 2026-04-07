@@ -4,7 +4,6 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>temi</title>
-
 <style>
 :root {
     --accent: rgba(140, 200, 255, 0.4);
@@ -112,7 +111,6 @@ canvas {
 }
 </style>
 </head>
-
 <body>
 
 <canvas id="fx"></canvas>
@@ -166,12 +164,8 @@ document.addEventListener("mousemove", e => {
 
 const canvas = document.getElementById("fx");
 const ctx = canvas.getContext("2d");
-
 let w, h;
-function resize() {
-    w = canvas.width = innerWidth;
-    h = canvas.height = innerHeight;
-}
+function resize() { w = canvas.width = innerWidth; h = canvas.height = innerHeight; }
 resize();
 window.addEventListener("resize", resize);
 
@@ -218,23 +212,22 @@ document.addEventListener("keydown", e => {
 });
 
 let player;
-
 function onYouTubeIframeAPIReady() {
     player = new YT.Player('player', {
         width: '300',
         height: '200',
-        videoId: 'HJl-i58SuW4',
+        videoId: 'gkoSFix4AZA',
         playerVars: {
             autoplay: 0,
             controls: 0,
             disablekb: 1,
             loop: 1,
-            playlist: 'HJl-i58SuW4'
+            playlist: 'gkoSFix4AZA'
         },
         events: {
-            onStateChange: () => {
-                if (player.getPlayerState() === YT.PlayerState.PAUSED) {
-                    player.playVideo();
+            onStateChange: event => {
+                if (event.target.getPlayerState() === YT.PlayerState.PAUSED) {
+                    event.target.playVideo();
                 }
             }
         }
@@ -242,10 +235,8 @@ function onYouTubeIframeAPIReady() {
 }
 
 let started = false;
-
 document.addEventListener("click", () => {
     if (!started && player) {
-        player.unMute();
         player.playVideo();
         started = true;
     }
