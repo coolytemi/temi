@@ -139,9 +139,10 @@ src="https://www.bing.com/th/id/OIP.0EMfS4vBWXE-HWQNHE8XGQHaJQ?w=181&h=211&c=8&r
 
 <div id="easter">you found it.</div>
 
-<script>
-const card = document.getElementById("card");
+<div id="player" style="display:none;"></div>
+<script src="https://www.youtube.com/iframe_api"></script>
 
+<script>
 function updateTime() {
     document.getElementById("time").textContent =
         "Current time: " + new Date().toLocaleTimeString();
@@ -149,6 +150,7 @@ function updateTime() {
 setInterval(updateTime, 1000);
 updateTime();
 
+const card = document.getElementById("card");
 document.addEventListener("mousemove", e => {
     const x = (e.clientX / innerWidth - .5) * 10;
     const y = (e.clientY / innerHeight - .5) * 10;
@@ -159,11 +161,7 @@ const canvas = document.getElementById("fx");
 const ctx = canvas.getContext("2d");
 
 let w, h;
-
-function resize() {
-    w = canvas.width = innerWidth;
-    h = canvas.height = innerHeight;
-}
+function resize() { w = canvas.width = innerWidth; h = canvas.height = innerHeight; }
 resize();
 window.addEventListener("resize", resize);
 
@@ -191,7 +189,6 @@ function rain() {
 
     requestAnimationFrame(rain);
 }
-
 rain();
 
 let seq = "";
@@ -203,6 +200,41 @@ document.addEventListener("keydown", e => {
         easter.style.opacity = 1;
         setTimeout(() => easter.style.opacity = 0, 3000);
         seq = "";
+    }
+});
+
+let player;
+function onYouTubeIframeAPIReady() {
+    player = new YT.Player('player', {
+        height: '0',
+        width: '0',
+        videoId: 'Z6ylGHfLrdI',
+        playerVars: {
+            autoplay: 0,
+            controls: 0,
+            disablekb: 1,
+            modestbranding: 1,
+            start: 263,
+            loop: 1,
+            playlist: 'Z6ylGHfLrdI'
+        },
+        events: {
+            onStateChange: enforcePlay
+        }
+    });
+}
+
+function enforcePlay(event) {
+    if (player && player.getPlayerState() === YT.PlayerState.PAUSED) {
+        player.playVideo();
+    }
+}
+
+let started = false;
+document.addEventListener("click", () => {
+    if (!started && player) {
+        player.playVideo();
+        started = true;
     }
 });
 </script>
