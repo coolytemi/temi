@@ -4,15 +4,12 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>temi</title>
-
 <style>
 :root {
     --accent: rgba(140, 200, 255, 0.4);
     --glass: rgba(0,0,0,0.55);
 }
-
 * { box-sizing: border-box; }
-
 body {
     margin: 0;
     height: 100vh;
@@ -30,20 +27,9 @@ body {
     overflow: hidden;
     user-select: none;
 }
-
-canvas {
-    position: fixed;
-    inset: 0;
-    pointer-events: none;
-}
-
-.fade {
-    opacity: 0;
-    animation: fadeIn 2s forwards;
-}
-
+canvas { position: fixed; inset: 0; pointer-events: none; }
+.fade { opacity: 0; animation: fadeIn 2s forwards; }
 @keyframes fadeIn { to { opacity: 1; } }
-
 #pfp {
     width: 120px;
     height: 120px;
@@ -53,7 +39,6 @@ canvas {
     box-shadow: 0 10px 30px rgba(0,0,0,.6);
     margin-bottom: 22px;
 }
-
 .card {
     background: var(--glass);
     backdrop-filter: blur(22px);
@@ -65,36 +50,18 @@ canvas {
         0 25px 80px rgba(0,0,0,.75),
         inset 0 0 0 1px rgba(255,255,255,.08);
 }
-
-.bio {
-    font-size: 24px;
-    line-height: 1.5;
-    margin-bottom: 18px;
-}
-
-#time {
-    font-size: 18px;
-    color: #bff;
-    margin-bottom: 26px;
-}
-
-.icons {
-    display: flex;
-    justify-content: center;
-    gap: 26px;
-}
-
+.bio { font-size: 24px; line-height: 1.5; margin-bottom: 18px; }
+#time { font-size: 18px; color: #bff; margin-bottom: 26px; }
+.icons { display: flex; justify-content: center; gap: 26px; }
 .icons img {
     width: 48px;
     filter: invert(1);
     transition: transform .2s, filter .2s;
 }
-
 .icons img:hover {
     transform: scale(1.18);
     filter: invert(1) drop-shadow(0 0 12px var(--accent));
 }
-
 #easter {
     position: fixed;
     bottom: 40px;
@@ -105,22 +72,16 @@ canvas {
 }
 </style>
 </head>
-
 <body>
-
 <canvas id="fx"></canvas>
-
 <img id="pfp" class="fade"
 src="https://www.bing.com/th/id/OIP.0EMfS4vBWXE-HWQNHE8XGQHaJQ?w=181&h=211&c=8&rs=1&qlt=90&o=6&pid=3.1&rm=2">
-
 <div class="card fade" id="card">
     <div class="bio">
         Hi, I'm temi,<br>
         Luau programmer & Video maker
     </div>
-
     <div id="time">Current time: --:--:--</div>
-
     <div class="icons">
         <a href="https://discord.com/users/1466129968940712286" target="_blank">
             <img src="https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/discord.svg">
@@ -136,12 +97,9 @@ src="https://www.bing.com/th/id/OIP.0EMfS4vBWXE-HWQNHE8XGQHaJQ?w=181&h=211&c=8&r
         </a>
     </div>
 </div>
-
 <div id="easter">you found it.</div>
-
 <div id="player" style="display:none;"></div>
 <script src="https://www.youtube.com/iframe_api"></script>
-
 <script>
 function updateTime() {
     document.getElementById("time").textContent =
@@ -159,37 +117,37 @@ document.addEventListener("mousemove", e => {
 
 const canvas = document.getElementById("fx");
 const ctx = canvas.getContext("2d");
-
 let w, h;
 function resize() { w = canvas.width = innerWidth; h = canvas.height = innerHeight; }
 resize();
 window.addEventListener("resize", resize);
 
-const particles = Array.from({length: 220}, () => ({
+const particles = Array.from({length: 250}, () => ({
     x: Math.random() * w,
     y: Math.random() * h,
-    l: Math.random() * 20 + 10,
-    s: Math.random() * 4 + 4
+    size: Math.random() * 2 + 1,
+    dx: (Math.random() - 0.5) * 0.5,
+    dy: (Math.random() - 0.5) * 0.5,
+    alpha: Math.random() * 0.5 + 0.2
 }));
 
-function rain() {
-    ctx.clearRect(0,0,w,h);
-    ctx.strokeStyle = "rgba(200,220,255,.25)";
-    ctx.lineWidth = 1;
-
-    particles.forEach(d => {
+function animateParticles() {
+    ctx.clearRect(0, 0, w, h);
+    particles.forEach(p => {
+        p.x += p.dx;
+        p.y += p.dy;
+        p.size += 0.01;
+        if (p.x < 0 || p.x > w) p.dx *= -1;
+        if (p.y < 0 || p.y > h) p.dy *= -1;
+        if (p.size > 4) p.size = 1;
         ctx.beginPath();
-        ctx.moveTo(d.x, d.y);
-        ctx.lineTo(d.x, d.y + d.l);
-        ctx.stroke();
-
-        d.y += d.s;
-        if (d.y > h) d.y = -20;
+        ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(200,220,255,${p.alpha})`;
+        ctx.fill();
     });
-
-    requestAnimationFrame(rain);
+    requestAnimationFrame(animateParticles);
 }
-rain();
+animateParticles();
 
 let seq = "";
 document.addEventListener("keydown", e => {
@@ -208,28 +166,26 @@ function onYouTubeIframeAPIReady() {
     player = new YT.Player('player', {
         height: '0',
         width: '0',
-        videoId: 'Z6ylGHfLrdI',
+        videoId: 'HJl-i58SuW4',
         playerVars: {
             autoplay: 0,
             controls: 0,
             disablekb: 1,
             modestbranding: 1,
-            start: 263,
+            start: 0,
             loop: 1,
-            playlist: 'Z6ylGHfLrdI'
+            playlist: 'HJl-i58SuW4'
         },
         events: {
             onStateChange: enforcePlay
         }
     });
 }
-
 function enforcePlay(event) {
     if (player && player.getPlayerState() === YT.PlayerState.PAUSED) {
         player.playVideo();
     }
 }
-
 let started = false;
 document.addEventListener("click", () => {
     if (!started && player) {
@@ -238,6 +194,5 @@ document.addEventListener("click", () => {
     }
 });
 </script>
-
 </body>
 </html>
